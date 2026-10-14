@@ -5,10 +5,9 @@ import os
 def load_vessels(directory):
     skipped = 0 # Start a counter for skipped vessels at 0
 
-    filenames = os.listdir(directory) # Find the filenames in the directory
+    filenames = os.listdir(directory) # Find the file names in the directory
 
     print("\nRegistered HarborFlow vessels:")
-    
     
     for file in filenames: # Loop through each name
         path = directory+file 
@@ -37,19 +36,23 @@ def load_json(path):
 
 def inspect_vessel():
     directory = "dataset/vessels/"
-    filenames = os.listdir(directory)
-    vessel_name = input("Vessel name: ").upper().strip()
+    filenames = os.listdir(directory) # Find the file names
+    
+    vessel_name = input("Vessel name: ").upper().strip() # Ask user for a vessel name 
+    
     vessels_list = []
-    for file in filenames: # Loop through each name
+
+    for file in filenames: # Loop through each file name
         path = directory+file 
         try:
             with open(path, "r", encoding="utf-8") as file:
                 raw_text = file.read() # Read the json file
                 try:
                     vessel = json.loads(raw_text) # Convert to dictonary if possible
-                    vessels_list.append(vessel["name"].upper()) # Adds all dictionaries to a list
-                    if vessel_name == vessel["name"].upper():
-                        selected_vessel_id = vessel["vessel_id"]
+                    vessels_list.append(vessel["name"].upper()) # Adds all vessel dictionaries to a list
+                    
+                    if vessel_name == vessel["name"].upper(): # If the vessel name is the same as the one inputted by the user:
+                        selected_vessel_id = vessel["vessel_id"] # This is the ID of the vessel the user wants
             
                 except json.decoder.JSONDecodeError: 
                     pass
@@ -57,40 +60,41 @@ def inspect_vessel():
         except FileNotFoundError:
             print(f"Missing file")
                 
-        if vessel_name not in vessels_list:
-         print("Manifest unavailable")
-         return
-        
+        if vessel_name not in vessels_list: # If the vessel wasn't found, return
+            print("Manifest unavailable")
+            return
 
-    reference_date = input("Reference date (YYYY-MM-DD): ")
+    reference_date = input("Reference date (YYYY-MM-DD): ") # Ask the user for a reference date
+
+    # Validate the date
     while not (reference_date[0:4].isdigit() and reference_date[5:7].isdigit() and reference_date[8:10].isdigit() and reference_date[4] == "-" and reference_date[7] == "-" and len(reference_date) == 10):
         print("Invalid reference date")
         reference_date = input("Reference date (YYYY-MM-DD): ")
 
-    
-    
-    smallest_difference = 10000
+    smallest_difference = 1000000
+
+    # Open the file: port_calls.csv
     csv_filename = "dataset/port_calls.csv"
     with open(csv_filename, "r", newline="") as file:
-     reader = csv.reader(file)
-     rows = list(reader)
+        reader = csv.reader(file)
+        rows = list(reader) # Rows is a list. Each element is a list of columns. This is the port_calls table
     for row in rows:
-        if row[1] == selected_vessel_id:
+        if row[1] == selected_vessel_id: # If this row contains the ID of the vessel the user selected:
             stripped_date = row[3].replace("-","")
             stripped_reference_date = reference_date.replace("-","")
-            stripped_date = int(stripped_date)
-            stripped_reference_date = int(stripped_reference_date)
-            difference = stripped_reference_date - stripped_date
-            if difference < smallest_difference:
+            stripped_date = int(stripped_date) # Take the row date, and turn it into an int
+            stripped_reference_date = int(stripped_reference_date) # Take the reference date, inputted by the user, and turn it into an int
+            
+            difference = stripped_reference_date - stripped_date 
+            if difference <= 0 and difference < smallest_difference: # Check if the row date is the earliest date on or after the reference date
                 smallest_difference = difference
-                call_id = row[0]
+                call_id = row[0] # If it is the earliest date, save the call ID from this row
+                
+    # Look through manifests
     manifests = "dataset/manifests"
     with open(manifests, "r", encoding="utf-8") as manifest_file:
-        # Look through manifests and find the one with matching call id
+        # Find the manifest with matching call id
 
-
-
-            
 
 def identify_cargo():
     print("HI")
