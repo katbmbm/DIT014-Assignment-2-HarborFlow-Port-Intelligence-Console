@@ -4,8 +4,8 @@ import os
 import datetime
 
 from data_access import load_vessels
-from operations import inspect_vessel
-from text_tools import validade_date
+from operations import inspect_vessel, export_customer_profile
+from text_tools import validate_date
 
 def identify_cargo():
     print("HI")
@@ -52,13 +52,16 @@ def main():
             load_vessels("dataset/vessels/")
             vessel_name = input("\nVessel name: ").upper().strip() # Ask user for a vessel name
             reference_date = input("Reference date (YYYY-MM-DD): ") # Ask the user for a reference date
-            reference_date = validade_date(reference_date)
+            reference_date = validate_date(reference_date)
             inspect_vessel("dataset/vessels/", vessel_name, reference_date)
 
         elif choice =="3":
             identify_cargo()
+            
         elif choice =="4":
-            identify_profile()
+            name = input("\nCustomer name: ").strip().title()
+            export_customer_profile(name)
+            
         elif choice =="5":
             find_portcalls()
         elif choice =="6":
