@@ -19,10 +19,10 @@ Contribution: Wrote the main function and the code for task 2. Contributed to th
 
 Architecture
 ------------
-main.py responsibilities: Commence a while loop and in such, print the main menu, ask the user to select an option, and call to the function that corresponds to that option accordingly using an if-else branch. Terminate the program once the user enters 10. Deal with invalid option entries. SPLIT UP THE MAIN AND WRITE ABOUT WHAT EACH FILE DOES
-data_access.py responsibilities:
-operations.py responsibilities:
-text_tools.py responsibilities:
+main.py responsibilities: Main.py runs the main menu, calls upon functions depending on the user's choice and asks the user for inputs (which are passed into the functions).
+data_access.py responsibilities: Deals with opening and processing files...
+operations.py responsibilities: ...
+text_tools.py responsibilities: Deels with processing strings, validating user inputs...
 
 
 File and error-handling design
