@@ -30,7 +30,7 @@ def search_reports():
 
 
 def main():
-    choice = "11"
+    choice = "0"
     while choice != "10":
         print("\nHARBORFLOW PORT INTELLIGENCE")
         print("1. List registered vessels")
@@ -46,14 +46,14 @@ def main():
 
         choice = input("Select service: ")
         if choice == "1":
-            load_vessels("dataset/vessels/")
+            load_vessels("dataset/vessels/") 
 
         elif choice == "2":
             load_vessels("dataset/vessels/")
             vessel_name = input("\nVessel name: ").upper().strip() # Ask user for a vessel name
             reference_date = input("Reference date (YYYY-MM-DD): ") # Ask the user for a reference date
-            validade_date(reference_date)
-            inspect_vessel(vessel_name, reference_date)
+            reference_date = validade_date(reference_date)
+            inspect_vessel("dataset/vessels/", vessel_name, reference_date)
 
         elif choice =="3":
             identify_cargo()
@@ -71,9 +71,8 @@ def main():
             search_reports()
         elif choice != "10":
             print("Error - Select a service from 1 to 10.")
-    print("Console closed. HarborFlow operational data remains safe.")
+    print("\nConsole closed. HarborFlow operational data remains safe.\n")
       
        
 if __name__ == "__main__":
    main()
-
