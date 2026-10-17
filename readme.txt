@@ -8,7 +8,7 @@ Python version tested: 3.14.7
 Team members and concrete contributions
 ---------------------------------------
 Name: Katherine
-Contribution: Wrote the code for task 1. Contributed to the code for task 2.
+Contribution: Wrote the code for task 1 and 4. Contributed to the code for task 2.
 
 Name: Kevi
 Contribution: Contributed to the code for task 1.
