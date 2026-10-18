@@ -1,27 +1,15 @@
-import json
-import csv
-import os
-import datetime
-
 from data_access import load_vessels
-from operations import inspect_vessel, export_customer_profile, find_portcalls, asses_weather
+from operations import inspect_vessel, export_customer_profile, find_portcalls, analyze_longest_seq, asses_weather
 from text_tools import validate_date, validate_month
 
 def identify_cargo():
     print("HI")
 
-def identify_profile():
-    print("HI")
-
 def sanitize_report():
-    print("HI")
-
-def analyze_sequence():
     print("HI")
 
 def search_reports():
     print("HI")
-
 
 def main():
     choice = "0"
@@ -53,25 +41,29 @@ def main():
             identify_cargo()
             
         elif choice =="4":
-            name = input("\nCustomer name: ").strip().title()
-            export_customer_profile(name)
+            name = input("\nCustomer name: ").strip().title() # Asks for input
+            export_customer_profile(name) # Runs the operation
             
         elif choice =="5":
-            month = input("Month (1-12): ") #Asks for input
-            validate_month(month) #Validates the input
+            month_input = input("\nMonth (1-12): ") #Asks for input
+            month = validate_month(month_input) #Validates the input
             find_portcalls(month) #Gives a list of the port calls in the chosen month or "no port calls found"
             
         elif choice =="6":
             sanitize_report()
+
         elif choice =="7":
-            analyze_sequence()
+            analyze_longest_seq("dataset/manifests/") # Runs the operation
+
         elif choice =="8":
-            date_weather = input("Reference date (YYYY-MM-DD): ")
+            date_weather = input("\nReference date (YYYY-MM-DD): ")
             date_weather = validate_date(date_weather)
             weather_vessel_name = input("Vessel name: ").upper().strip()
             asses_weather(date_weather, weather_vessel_name)
+
         elif choice =="9":
             search_reports()
+
         elif choice != "10":
             print("Error - Select a service from 1 to 10.")
     print("\nConsole closed. HarborFlow operational data remains safe.\n")
