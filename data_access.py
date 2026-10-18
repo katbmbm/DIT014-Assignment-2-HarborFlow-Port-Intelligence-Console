@@ -83,3 +83,12 @@ def write_csv_file(directory, rows):
     with open(directory, "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(rows)
+
+def open_port_call(directory):
+    try:
+        with open(directory, "r", newline="") as file:
+            reader = csv.reader(file)
+            rows = list(reader) # Rows is a list. Each element is a list of columns. This is the port_calls table
+            return rows
+    except FileNotFoundError:
+        print(f"Missing file") 
