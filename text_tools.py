@@ -9,3 +9,11 @@ def validate_date(reference_date):
 def strip_date(date):
     stripped_date = str(date).replace("-","")
     return int(stripped_date)
+
+def validate_month(month):
+    month = int(month)
+    while month < 1 or month > 12:
+        print("Error - Enter a month from 1 to 12")
+        month = input("Month (1-12): ")
+    return month
+    
