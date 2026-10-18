@@ -189,3 +189,76 @@ def find_portcalls(month):
             print(f"- {day} {month_letters} {year} | {vessel} | {port_code} | {call_id}")
 
 
+def asses_weather(date_weather, weather_vessel_name):
+    port_rows = open_csv_file("dataset/port_calls.csv") #Get port_calls.csv
+    weather_rows = open_csv_file("dataset/weather.csv") #Get weather.csv
+    vessel_files = get_dictionary_list("dataset/vessels/") #Get vessels
+    smallest_difference = -9999999999 #Initalize smalles_difference
+    vessel_id = 0 #Initalize vessel_id
+    call_found = False #Initalize status of call_found
+    forecast_available = False #Initalize status of forecast_available
+
+    for vessel in vessel_files: #Check if user input vessel exists
+        if weather_vessel_name == vessel["name"].upper():
+            vessel_id = vessel["vessel_id"]
+            vessel_found = True
+
+    if not vessel_found: #Gives error message and returns to main menu
+        print("Vessel not found")
+        return
+
+    for row in port_rows: #Loops through the rows in port_rows and finds the matching date and vessel_id
+        if vessel_id == row[1]:
+            comparison_date = strip_date(row[3])
+            date_weather = strip_date(date_weather)
+        
+            difference = date_weather - comparison_date # Calculate the difference between the date inputted by the user, and the date on this row
+                    
+            if difference <= 0 and difference > smallest_difference: # Check if the row date is the earliest date on or after the reference date
+                smallest_difference = difference
+                port_code = row[2] # If it is the earliest date, save the call ID from this row
+                date = row[3] # Save this to be printed at the end
+                call_found = True #Changes status of call_found
+    
+    if not call_found: #Prints error message and return to menu
+        print("No upcoming port calls found.")
+        return
+
+    month = datetime.datetime(int(date[:4]), int(date[5:7]), int(date[-2:])).strftime("%B") #Converts the month to letters
+
+    for row in weather_rows: #Loops through the rows in weather.csv
+        if port_code == row[0] and date == row[1]: #If both the port code and date matches in weather.csv, continue
+            forecast_available = True #Changes status of forecast_available
+            try: #Checks if the values are floats/integers
+                wind_kmh = float(row[2]) 
+                precipitation_mm = float(row[3])
+                wave_height_m = float(row[4])
+
+                #Print the first 2 info lines
+                print(f"\n{weather_vessel_name.title()} | {port_code} | {date[-2:]} {month} {date[:4]}")
+                print(f"Wind: {wind_kmh} km/h | Rain: {precipitation_mm} mm | Waves: {wave_height_m} m")
+
+                recommendations = [] #Creates empty list
+                #Checks and applies recommendations
+                if wind_kmh >= 45:
+                    recommendations.append("Suspend crane operations.")
+                if wave_height_m >= 2.5:
+                    recommendations.append("Arrange tug assistance.")
+                if precipitation_mm >= 8 and wind_kmh < 45:
+                    recommendations.append("Prepare covered handling.")
+                if not recommendations:
+                    recommendations.append("Normal operating plan.")
+
+                #Prints the last info line
+                print("Recommendation:", " ".join(recommendations))
+            #Catches values that are strings, like "not-recorded" and informs the user
+            except ValueError:
+                print("Malformed forecast row.")
+
+    #If there's no forecast for that date and port code
+    if not forecast_available:
+        print("Forecast unavailable")
+        return
+
+
+
