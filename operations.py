@@ -4,12 +4,9 @@ Keep calculations and record-processing logic separate from user interaction
 where practical.
 """
 
-import json
-import csv
-import os
 import datetime
 
-from data_access import get_dictionary_list, open_csv_file, write_csv_file, open_port_call
+from data_access import get_dictionary_list, open_csv_file, write_csv_file
 from text_tools import strip_date, validate_month
 
 def inspect_vessel(directory, vessel_name, reference_date):
@@ -153,16 +150,21 @@ def export_customer_profile(customer_name):
         write_csv_file("exports/customer-profiles.csv", customer_rows) # Write the updated list of rows into the CSV file
     print("Customer profile updated: exports/customer-profiles.csv")
 
+
 def find_portcalls(month):
     month = validate_month(month) #Checks if month is valid
     if 0 < month < 10: #Change the format if input is 1 to 9
         zero_month = "0" + str(month)
     else: #Keep the old format
         zero_month = str(month)
-    port_rows = open_port_call("dataset/port_calls.csv") #Get port_calls.csv
+
+    port_rows = open_csv_file("dataset/port_calls.csv") #Get port_calls.csv
+    if not port_rows: # If the open_csv_file fct returned False, the file is missing
+            print(f"Missing file") 
+            return
 
     matching_port_calls = [] #Initiate empty list
-    port_call_exists= False #Sets port_call to non-existent before we find any
+    port_call_exists = False #Sets port_call to non-existent before we find any
     vessels_list = get_dictionary_list("dataset/vessels/") #Get vessels
     for row in port_rows: #Loops through all rows in port calls and checks which match our date
         date_row = row[3]
@@ -189,14 +191,43 @@ def find_portcalls(month):
             print(f"- {day} {month_letters} {year} | {vessel} | {port_code} | {call_id}")
 
 
+def analyze_longest_seq(directory):
+    manifests_list = get_dictionary_list(directory)
+
+    longest_seq = []
+
+    for manifest in manifests_list: # Cycle through each manifest
+        windows = [[]] # Create a windows list with an empty window list inside of it
+        index = 0 # Start an index for the windows at 0
+        for code in manifest["event_codes"]: # Cycle through each event code in the manifest
+            if code not in windows[index]: # If the code isn't in our window
+                windows[index].append(code) # Add the code to the window
+            else: # If the code is already in the window
+                windows.append([]) # Make a new window
+                index += 1 # We will start working from the new window
+                windows[index].append(code) # Add the code to this window
+
+        for window in windows: # Look through each window in this manifest
+            if len(window) > len(longest_seq): # If any window is longer than our longest sequence
+                longest_seq = window # Our longest sequence becomes this window 
+                codes_string = ",".join(manifest["event_codes"]) # Save a string of the event codes in this manifest for the print
+
+    # Print the results
+    sequence_string = " -> ".join(longest_seq)
+    print(f"\nEvent codes: {codes_string}")
+    print(f"Longest stable sequence length: {len(longest_seq)}")
+    print(f"Sequence: {sequence_string}")
+
+
 def asses_weather(date_weather, weather_vessel_name):
     port_rows = open_csv_file("dataset/port_calls.csv") #Get port_calls.csv
     weather_rows = open_csv_file("dataset/weather.csv") #Get weather.csv
     vessel_files = get_dictionary_list("dataset/vessels/") #Get vessels
-    smallest_difference = -9999999999 #Initalize smalles_difference
+    smallest_difference = -9999999999 #Initalize smallest_difference
     vessel_id = 0 #Initalize vessel_id
     call_found = False #Initalize status of call_found
     forecast_available = False #Initalize status of forecast_available
+    vessel_found = False #Initalize status of vessel_found
 
     for vessel in vessel_files: #Check if user input vessel exists
         if weather_vessel_name == vessel["name"].upper():
@@ -259,6 +290,3 @@ def asses_weather(date_weather, weather_vessel_name):
     if not forecast_available:
         print("Forecast unavailable")
         return
-
-
-
