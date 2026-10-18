@@ -9,8 +9,8 @@ import csv
 import os
 import datetime
 
-from data_access import get_dictionary_list, open_csv_file, write_csv_file
-from text_tools import strip_date
+from data_access import get_dictionary_list, open_csv_file, write_csv_file, open_port_call
+from text_tools import strip_date, validate_month
 
 def inspect_vessel(directory, vessel_name, reference_date):
     vessels_list = []
@@ -152,6 +152,40 @@ def export_customer_profile(customer_name):
         
         write_csv_file("exports/customer-profiles.csv", customer_rows) # Write the updated list of rows into the CSV file
     print("Customer profile updated: exports/customer-profiles.csv")
-        
+
+def find_portcalls(month):
+    month = validate_month(month) #Checks if month is valid
+    if 0 < month < 10: #Change the format if input is 1 to 9
+        zero_month = "0" + str(month)
+    else: #Keep the old format
+        zero_month = str(month)
+    port_rows = open_port_call("dataset/port_calls.csv") #Get port_calls.csv
+
+    matching_port_calls = [] #Initiate empty list
+    port_call_exists= False #Sets port_call to non-existent before we find any
+    vessels_list = get_dictionary_list("dataset/vessels/") #Get vessels
+    for row in port_rows: #Loops through all rows in port calls and checks which match our date
+        date_row = row[3]
+        if zero_month == date_row[5:7]:
+            port_call_exists = True #Changes to true when a port call is found
+            vessel_id = row[1] #Gets the vessel id from that row
+           
+            for vessel_dictionary in vessels_list: #Loops through the vessels and matches their id to their name
+                if vessel_id == vessel_dictionary["vessel_id"]:
+                    vessel_name = vessel_dictionary["name"]
+                    break
+            matching_port_calls.append((row, vessel_name)) #Adds both row and vessel_name to a list, in a tuple
+    if not port_call_exists: #Prints a message if no port calls were found
+        print("No port calls found")
+    else:
+        month_letters = datetime.datetime(2000, month, 1).strftime("%B") #Turns the input month into letters
+        print(f"Port calls in {month_letters}:")
+    
+        for row, vessel in matching_port_calls: #Loops through the matching rows and vessels and prints all the info
+            day = row[3][8:10]
+            year = row[3][0:4]
+            port_code = row[2]
+            call_id = row[0]
+            print(f"- {day} {month_letters} {year} | {vessel} | {port_code} | {call_id}")
 
 
