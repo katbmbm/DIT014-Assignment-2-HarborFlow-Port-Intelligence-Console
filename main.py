@@ -4,7 +4,7 @@ import os
 import datetime
 
 from data_access import load_vessels
-from operations import inspect_vessel, export_customer_profile, find_portcalls
+from operations import inspect_vessel, export_customer_profile, find_portcalls, asses_weather
 from text_tools import validate_date, validate_month
 
 def identify_cargo():
@@ -17,9 +17,6 @@ def sanitize_report():
     print("HI")
 
 def analyze_sequence():
-    print("HI")
-
-def asses_weather():
     print("HI")
 
 def search_reports():
@@ -69,7 +66,10 @@ def main():
         elif choice =="7":
             analyze_sequence()
         elif choice =="8":
-            asses_weather()
+            date_weather = input("Reference date (YYYY-MM-DD): ")
+            date_weather = validate_date(date_weather)
+            weather_vessel_name = input("Vessel name: ").upper().strip()
+            asses_weather(date_weather, weather_vessel_name)
         elif choice =="9":
             search_reports()
         elif choice != "10":
