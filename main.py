@@ -4,16 +4,13 @@ import os
 import datetime
 
 from data_access import load_vessels
-from operations import inspect_vessel, export_customer_profile
-from text_tools import validate_date
+from operations import inspect_vessel, export_customer_profile, find_portcalls
+from text_tools import validate_date, validate_month
 
 def identify_cargo():
     print("HI")
 
 def identify_profile():
-    print("HI")
-
-def find_portcalls():
     print("HI")
 
 def sanitize_report():
@@ -63,7 +60,10 @@ def main():
             export_customer_profile(name)
             
         elif choice =="5":
-            find_portcalls()
+            month = input("Month (1-12): ") #Asks for input
+            validate_month(month) #Validates the input
+            find_portcalls(month) #Gives a list of the port calls in the chosen month or "no port calls found"
+            
         elif choice =="6":
             sanitize_report()
         elif choice =="7":
