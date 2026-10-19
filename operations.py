@@ -5,7 +5,8 @@ where practical.
 """
 
 import datetime
-
+import os
+import json
 from data_access import get_dictionary_list, open_csv_file, write_csv_file
 from text_tools import strip_date, validate_month
 
