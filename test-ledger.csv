@@ -4,8 +4,8 @@ Relationships,Missing shipment,Inspect Nordic Relay from 2026-10-18,Missing reco
 Export,Update existing customer,Export same customer twice,One replaced row and no duplicate,One replaced row and no duplicate,Kat,Run
 Month,Invalid source date,Choose month 10,Bad source row skipped and valid calls shown,Bad source row skipped and valid calls shown,Frida,Run
 Regex,Several identifiers,Sanitize Reefer temperature deviation,All three identifier types replaced,All three identifier types replaced when share-sensitive identifiers are found,Kevi,Run
-Sequence,Repeated event,Analyze HFL-GOT-2048,Longest first stable window reported,Doesn't ask for anything,Kat,Not run
+Sequence,Repeated event,Analyze HFL-GOT-2048,Longest first stable window reported,Longest first stable window reported,Kat,Run
 Weather,Combined thresholds,Nordic Relay from 2026-10-18,Wind and wave recommendations combined,Wind and wave recommendations combined,Frida,Run
 Weather,Missing forecast,Baltic Pioneer from 2026-11-05,Forecast unavailable without stopping,Forecast unavailable without stopping,Frida,Run
 Search,Two query words,Search reefer delay,Positive matches scored and sorted,Positive matches scored and sorted,Kevi,Run
-Cache,Corrupt cache,Replace cache with invalid JSON then search,Cache rebuilt,,,Not run
+Cache,Corrupt cache,Replace cache with invalid JSON then search,Cache rebuilt,Cache rebuilt,Kevi,Run
