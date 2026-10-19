@@ -1,4 +1,4 @@
-from data_access import load_vessels
+from data_access import load_vessels, find_vessel
 from operations import inspect_vessel, export_customer_profile, find_portcalls, analyze_longest_seq, asses_weather, classify_shipment, identify_cargo, sanitize_report
 from text_tools import validate_date, validate_month
 
@@ -26,8 +26,11 @@ def main():
             load_vessels("dataset/vessels/") 
 
         elif choice == "2":
-            load_vessels("dataset/vessels/")
+           load_vessels("dataset/vessels/")
             vessel_name = input("\nVessel name: ").upper().strip() # Ask user for a vessel name
+            found_vessel = find_vessel(vessel_name)
+            if not found_vessel:
+                main()
             reference_date = input("Reference date (YYYY-MM-DD): ") # Ask the user for a reference date
             reference_date = validate_date(reference_date)
             inspect_vessel("dataset/vessels/", vessel_name, reference_date)
