@@ -34,9 +34,11 @@ def find_non_repeat_seqs(seq_list):
             windows[index].append(item) # Add the item to the window
                     
         else: # If the item is already in the window
-            windows.append([]) # Make a new window
-            index += 1 # We will start working from the new window
-            windows[index].append(item) # Add the item to this window
+            for inner_index in range(len(windows[index])-1): # Cycle through the indecies for the items inside the window
+                if windows[index][inner_index] == item: # If you reach the item that was repeated:
+                    windows.append(windows[index-1][inner_index+1:]) # Create a new window that starts just after the repeated item
+                    index += 1 # We will start working from the new window
+                    windows[index].append(item) # Add the item to this window
 
     return windows # Return a list of sequences without repetition, made from the list inputted
     
