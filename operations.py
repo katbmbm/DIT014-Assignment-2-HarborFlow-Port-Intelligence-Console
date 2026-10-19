@@ -8,24 +8,13 @@ import datetime
 import os
 import json
 import re
-from data_access import get_dictionary_list, open_csv_file, write_csv_file
-from text_tools import strip_date, validate_month
+from data_access import get_dictionary_list, open_csv_file, write_csv_file, find_vessel
+from text_tools import strip_date
 
 def inspect_vessel(directory, vessel_name, reference_date):
     vessels_list = []
     
-    # FIND THE VESSEL'S ID
-    selected_vessel_id = 0
-    
     vessels_list = get_dictionary_list(directory) # Get a list of all the vessel dictionaries
-
-    for vessel in vessels_list:
-        if vessel_name == vessel["name"].upper(): # If the vessel name is the same as the one inputted by the user:
-            selected_vessel_id = vessel["vessel_id"] # This is the ID of the vessel the user wants
-                
-    if selected_vessel_id == 0: # If the vessel wasn't found, return
-        print("Manifest unavailable")
-        return
 
     # FIND THE CORRECT PORT CALL ID
     call_id = 0
@@ -229,7 +218,6 @@ def export_customer_profile(customer_name):
 
 
 def find_portcalls(month):
-    month = validate_month(month) #Checks if month is valid
     if 0 < month < 10: #Change the format if input is 1 to 9
         zero_month = "0" + str(month)
     else: #Keep the old format
