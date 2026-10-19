@@ -31,6 +31,7 @@ def main():
             found_vessel = find_vessel(vessel_name)
             if not found_vessel:
                 main()
+                return
             reference_date = input("Reference date (YYYY-MM-DD): ") # Ask the user for a reference date
             reference_date = validate_date(reference_date)
             inspect_vessel("dataset/vessels/", vessel_name, reference_date)
