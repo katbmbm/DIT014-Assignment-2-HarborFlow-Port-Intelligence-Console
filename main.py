@@ -3,10 +3,6 @@ from operations import inspect_vessel, export_customer_profile, find_portcalls, 
 from text_tools import validate_date, validate_month
 
 
-
-def sanitize_report():
-    print("HI")
-
 def search_reports():
     print("HI")
 
