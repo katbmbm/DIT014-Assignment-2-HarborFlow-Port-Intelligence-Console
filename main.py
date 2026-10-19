@@ -34,7 +34,7 @@ def main():
                 return
             reference_date = input("Reference date (YYYY-MM-DD): ") # Ask the user for a reference date
             reference_date = validate_date(reference_date)
-            inspect_vessel("dataset/vessels/", vessel_name, reference_date)
+            inspect_vessel(vessel_name, reference_date)
 
         elif choice =="3":
             identify_cargo()
