@@ -513,21 +513,21 @@ def search_reports():
 
     # Normalize query into distinct words
     query_words = set(re.findall(r'\b\w+\b', query.lower()))
-    if not query_words:
-        print(f"Matches for '{query}':")
-        return
-
-    # Gather matching incident IDs across all query words
-    matching_ids = set()
-    for word in query_words:
-        if word in word_index:
-            matching_ids.update(word_index[word])
-
+    
     print(f"Matches for '{query}':")
-    if not matching_ids:
+    
+    if not query_words:
         return
+
+    # Calculate scores by counting how many query words appear in each report.
+    score = {}
+    for word in query_words:
+        for inc_id in word_index.get(word, []):
+            score[inc_id] = score.get(inc_id, 0) + 1
+
+    matching_ids = score
 
     # Print clean, sorted list of matches
     for inc_id in sorted(matching_ids):
         title = title_lookup.get(inc_id, "Untitled")
-        print(f"- {inc_id} | {title}")
+        print(f"{inc_id} | score {score[inc_id]} | {title}")
