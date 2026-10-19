@@ -24,5 +24,19 @@ def validate_month(month):
         except ValueError:
             print("Error - Enter a month from 1 to 12")
             month = input("Month (1-12): ")
-    
+
+def find_non_repeat_seqs(seq_list):
+    windows = [[]] # Create a windows list with an empty window list inside of it
+    index = 0 # Start an index for the windows at 0
+
+    for item in seq_list: # Cycle through each item in the seq list
+        if item not in windows[index]: # If the item isn't in our window
+            windows[index].append(item) # Add the item to the window
+                    
+        else: # If the item is already in the window
+            windows.append([]) # Make a new window
+            index += 1 # We will start working from the new window
+            windows[index].append(item) # Add the item to this window
+
+    return windows # Return a list of sequences without repetition, made from the list inputted
     
