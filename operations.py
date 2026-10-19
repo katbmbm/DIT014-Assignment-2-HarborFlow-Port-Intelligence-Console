@@ -201,7 +201,8 @@ def export_customer_profile(customer_name):
 
     customer_found = False 
 
-    if not open_csv_file("exports/customer-profiles.csv"):  # If the file can't be found  
+    if not open_csv_file("exports/customer-profiles.csv"):  # If the file can't be found 
+        os.makedirs("exports", exist_ok=True)
         header = ["customer", "shipment_count", "total_weight_kg", "express_count", "destinations"] # Create the header
         write_csv_file("exports/customer-profiles.csv", [header, new_row]) # Create the CSV file with the header and new_row
     else:
