@@ -13,7 +13,7 @@ from text_tools import strip_date
 
 def inspect_vessel(directory, vessel_name, reference_date):
     vessels_list = []
-    
+    selected_vessel_id = find_vessel(vessel_name)
     vessels_list = get_dictionary_list(directory) # Get a list of all the vessel dictionaries
 
     # FIND THE CORRECT PORT CALL ID
