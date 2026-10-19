@@ -9,7 +9,7 @@ import os
 import json
 import re
 from data_access import get_dictionary_list, open_csv_file, write_csv_file, find_vessel
-from text_tools import strip_date
+from text_tools import strip_date, find_non_repeat_seqs
 
 def inspect_vessel(directory, vessel_name, reference_date):
     vessels_list = []
@@ -325,26 +325,26 @@ def sanitize_report():
 
     print(f"Incident sanitized: {output_path}")
 
-def analyze_longest_seq(directory):
+def analyze_longest_seq(directory, call):
     manifests_list = get_dictionary_list(directory)
 
     longest_seq = []
 
-    for manifest in manifests_list: # Cycle through each manifest
-        windows = [[]] # Create a windows list with an empty window list inside of it
-        index = 0 # Start an index for the windows at 0
-        for code in manifest["event_codes"]: # Cycle through each event code in the manifest
-            if code not in windows[index]: # If the code isn't in our window
-                windows[index].append(code) # Add the code to the window
-            else: # If the code is already in the window
-                windows.append([]) # Make a new window
-                index += 1 # We will start working from the new window
-                windows[index].append(code) # Add the code to this window
+    manifest_found = False
 
-        for window in windows: # Look through each window in this manifest
-            if len(window) > len(longest_seq): # If any window is longer than our longest sequence
-                longest_seq = window # Our longest sequence becomes this window 
-                codes_string = ",".join(manifest["event_codes"]) # Save a string of the event codes in this manifest for the print
+    for manifest in manifests_list: # Cycle through each manifest
+        if manifest["call_id"].upper() == call.upper(): # If this is the manifest the user typed a call ID for:
+            manifest_found = True 
+            codes_string = ",".join(manifest["event_codes"]) # Save a string of the event codes in this manifest for the print
+            windows = find_non_repeat_seqs(manifest["event_codes"]) # Make a list of windows, or sequences with no repetition, from the event codes
+
+    if not manifest_found:
+        print("No manifest was found for this call ID.")
+        return
+
+    for window in windows: # Look through each window
+        if len(window) > len(longest_seq): # If any window is longer than our longest sequence
+            longest_seq = window # Our longest sequence becomes this window 
 
     # Print the results
     sequence_string = " -> ".join(longest_seq)
