@@ -7,5 +7,5 @@ Regex,Several identifiers,Sanitize Reefer temperature deviation,All three identi
 Sequence,Repeated event,Analyze HFL-GOT-2048,Longest first stable window reported,Doesn't ask for anything,Kat,Not run
 Weather,Combined thresholds,Nordic Relay from 2026-10-18,Wind and wave recommendations combined,Wind and wave recommendations combined,Frida,Run
 Weather,Missing forecast,Baltic Pioneer from 2026-11-05,Forecast unavailable without stopping,Forecast unavailable without stopping,Frida,Run
-Search,Two query words,Search reefer delay,Positive matches scored and sorted,,,Not run
+Search,Two query words,Search reefer delay,Positive matches scored and sorted,Positive matches scored and sorted,Kevi,Run
 Cache,Corrupt cache,Replace cache with invalid JSON then search,Cache rebuilt,,,Not run
