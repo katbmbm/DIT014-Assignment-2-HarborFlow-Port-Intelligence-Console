@@ -51,9 +51,9 @@ def main():
             analyze_longest_seq("dataset/manifests/") # Runs the operation
 
         elif choice =="8":
-            date_weather = input("\nReference date (YYYY-MM-DD): ")
-            date_weather = validate_date(date_weather)
             weather_vessel_name = input("Vessel name: ").upper().strip()
+            date_weather = input("Reference date (YYYY-MM-DD): ")
+            date_weather = validate_date(date_weather)
             asses_weather(date_weather, weather_vessel_name)
 
         elif choice =="9":
