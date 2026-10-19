@@ -11,7 +11,7 @@ Name: Katherine
 Contribution: Wrote the code for tasks 1, 4 and 7. Contributed to the code for task 2.
 
 Name: Kevi
-Contribution: Contributed to the code for task 1.
+Contribution: Wrote the code for tasks 3, 6 and 9. Contributed to the code for task 1.
 
 Name: Frida
 Contribution: Wrote the main function and the code for tasks 2, 5 and 8. Contributed to the code for task 1.
