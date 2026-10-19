@@ -52,7 +52,8 @@ def main():
             sanitize_report()
 
         elif choice =="7":
-            analyze_longest_seq("dataset/manifests/") # Runs the operation
+            call = input("\nCall ID: ")
+            analyze_longest_seq("dataset/manifests/", call) # Runs the operation
 
         elif choice =="8":
             weather_vessel_name = input("Vessel name: ").upper().strip()
