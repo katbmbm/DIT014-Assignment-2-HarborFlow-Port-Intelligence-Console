@@ -85,14 +85,13 @@ def write_csv_file(directory, rows):
         writer.writerows(rows)
 
 def find_vessel(vessel_name):
-    found_vessel = False
     selected_vessel_id = 0
     for vessel in vessels_list:
         if vessel_name == vessel["name"].upper(): # If the vessel name is the same as the one inputted by the user:
             selected_vessel_id = vessel["vessel_id"] # This is the ID of the vessel the user wants
-            found_vessel = True
             return selected_vessel_id
 
     if selected_vessel_id == 0: # If the vessel wasn't found, return
-        print("Vessel not found")
+        print("Vessel not found.")
+        return 
     
