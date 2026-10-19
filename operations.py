@@ -335,7 +335,7 @@ def sanitize_report():
     with open(output_path, 'w', encoding='utf-8') as out_f:
         out_f.write(sanitized_text)
 
-    print(f"Sanitized report successfully saved to {output_path}")
+    print(f"Incident sanitized: {output_path}")
 
 def analyze_longest_seq(directory):
     manifests_list = get_dictionary_list(directory)
