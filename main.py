@@ -26,7 +26,7 @@ def main():
             load_vessels("dataset/vessels/") 
 
         elif choice == "2":
-           load_vessels("dataset/vessels/")
+            load_vessels("dataset/vessels/")
             vessel_name = input("\nVessel name: ").upper().strip() # Ask user for a vessel name
             found_vessel = find_vessel(vessel_name)
             if not found_vessel:
