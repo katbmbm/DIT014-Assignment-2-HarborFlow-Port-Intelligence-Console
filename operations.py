@@ -424,3 +424,110 @@ def asses_weather(date_weather, weather_vessel_name):
     if not forecast_available:
         print("Forecast unavailable")
         return
+
+def search_reports():
+    index_path = "dataset/incidents-index.json" # Define path for the cached search index
+    incidents_dir = "dataset/incidents/" # Define directory where incident reports are stored
+    
+    if not os.path.exists(incidents_dir):
+        print("Incident directory not found.")
+        return
+
+    # Check if cache needs to be rebuilt
+    rebuild_cache = True # Default to True as a safeguard for missing, malformed, or outdated cache files
+    if os.path.exists(index_path): # Check if the cache file exists
+        try:
+            cache_mtime = os.path.getmtime(index_path) # Get the last modified time of the existing cache file
+            latest_incident_mtime = max(
+                os.path.getmtime(os.path.join(incidents_dir, f)) # Get the last modified time of each incident report file
+                for f in os.listdir(incidents_dir) if f.endswith(".json") # Only consider JSON files (just in case there are other file types in the directory)
+            )
+
+            if cache_mtime >= latest_incident_mtime: # If the cache is newer (greater) than or equal to the latest incident report, we can use it
+                rebuild_cache = False # If the cache is up-to-date, we don't need to rebuild it
+        except Exception:
+            rebuild_cache = True # Rebbuild the cache if any error occurs.
+
+    if rebuild_cache: # if the cache needs to be rebuilt, we will create a new index
+        # Create two empty dictionaries to hold the word index and titles
+        index_data = {} 
+        titles_data = {}
+
+        for filename in os.listdir(incidents_dir):
+            if filename.endswith(".json"):
+                file_path = os.path.join(incidents_dir, filename)
+                try:
+                    with open(file_path, 'r') as f:
+                        inc = json.load(f) # Open JSON file and load content into the dictionary, 'inc'
+                        inc_id = inc.get("incident_id") # Get the incident ID from the loaded JSON data
+                        title = inc.get("title", "Untitled") # Get the title from the loaded JSON data, defaulting to "Untitled" if not present
+                        report = inc.get("report", "") # Get the report text from the loaded JSON data, defaulting to an empty string if not present. The reason it's an empty string is becausee if you tried to run None.lower(), Python would crash with an AttributeError because None doesn't have a lowercase function.
+
+                        if inc_id: # If the inc_id is missing, we skip this incident report to avoid errors
+                            titles_data[inc_id] = title # Saves title in the titles_data dictionary with the incident ID as the key
+                            words = set(re.findall(r'\b\w+\b', report.lower())) # Normalize the report text to lowercase and extract unique words using regex. The regex pattern \b\w+\b matches whole words, ignoring punctuation and special characters. Using a set ensures that each word is stored only once, eliminating duplicates.
+                            
+                            for word in words: # Loop through each unique word in the report
+                                if word not in index_data: # If the word is not already in the index_data dictionary, we create a new entry for it with an empty set to hold incident IDs
+                                    index_data[word] = set() # Add the current incident ID to the set of incident IDs for this word. Using a set ensures that each incident ID is stored only once for each word, preventing duplicates.
+                                index_data[word].add(inc_id) # Add the incident ID to the set (sets automatically prevent duplicate IDs)
+
+                except Exception:
+                    continue
+        
+        # Sort the incident IDs for each word        
+        sorted_index = { 
+            w: sorted(list(ids)) for w, ids in sorted(index_data.items()) 
+            # Note: 'ids' is a set (unordered), so we convert it to a list 
+            # and use sorted() to put the incident IDs in neat alphabetical order
+        } 
+
+        sorted_titles = { 
+            inc_id: titles_data[inc_id] for inc_id in sorted(titles_data.keys()) 
+            # Sort the titles by incident ID
+        }
+
+        # Create a dictionary to hold the sorted index and titles for caching
+        cache_content = {
+            "index": sorted_index,
+            "titles": sorted_titles
+        }
+
+        os.makedirs(os.path.dirname(index_path), exist_ok=True) # Ensure the directory actually exists before we try to save a file inside it. Exist_ok=True prevents an error if the folder already exists
+        with open(index_path, 'w', encoding='utf-8') as cf: 
+            json.dump(cache_content, cf,) # json.dump writes the dictionary (cache_content) into the file (cf)
+
+    try:
+        with open(index_path, 'r', encoding='utf-8') as cf:
+            cache = json.load(cf)
+            word_index = cache.get("index", {})
+            title_lookup = cache.get("titles", {})
+    except Exception:
+        print("Error reading incident index cache.")
+        return
+
+    # User query
+    query = input("\nSearch incident reports: ").strip()
+    if not query:
+        return
+
+    # Normalize query into distinct words
+    query_words = set(re.findall(r'\b\w+\b', query.lower()))
+    if not query_words:
+        print(f"Matches for '{query}':")
+        return
+
+    # Gather matching incident IDs across all query words
+    matching_ids = set()
+    for word in query_words:
+        if word in word_index:
+            matching_ids.update(word_index[word])
+
+    print(f"Matches for '{query}':")
+    if not matching_ids:
+        return
+
+    # Print clean, sorted list of matches
+    for inc_id in sorted(matching_ids):
+        title = title_lookup.get(inc_id, "Untitled")
+        print(f"- {inc_id} | {title}")
