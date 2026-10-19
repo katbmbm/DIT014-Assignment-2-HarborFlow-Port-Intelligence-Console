@@ -199,12 +199,13 @@ def export_customer_profile(customer_name):
 
     customer_found = False 
 
+    header = ["customer", "shipment_count", "total_weight_kg", "express_count", "destinations"] # Create the header
+            
     if not open_csv_file("exports/customer-profiles.csv"):  # If the file can't be found 
-        os.makedirs("exports", exist_ok=True) # Create the file exports if it doesn't exist yet
-        header = ["customer", "shipment_count", "total_weight_kg", "express_count", "destinations"] # Create the header
+        os.makedirs("exports", exist_ok=True)
         write_csv_file("exports/customer-profiles.csv", [header, new_row]) # Create the CSV file with the header and new_row
     else:
-        customer_rows = open_csv_file("exports/customer-profiles.csv") # If the file can be found...
+        customer_rows = [header] + open_csv_file("exports/customer-profiles.csv") # If the file can be found...
         for i, customer in enumerate(customer_rows, start=0): # Cycle through each row
             if customer_name == customer[0]: # If our customer's name is already in the table:
                 customer_found = True # Set customer_found to True
@@ -242,7 +243,7 @@ def find_portcalls(month):
                     break
             matching_port_calls.append((row, vessel_name)) #Adds both row and vessel_name to a list, in a tuple
     if not port_call_exists: #Prints a message if no port calls were found
-        print("No port calls found")
+        print("No port calls found.")
     else:
         month_letters = datetime.datetime(2000, month, 1).strftime("%B") #Turns the input month into letters
         print(f"Port calls in {month_letters}:")
