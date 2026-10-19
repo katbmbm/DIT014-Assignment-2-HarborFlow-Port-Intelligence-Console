@@ -11,10 +11,8 @@ import re
 from data_access import get_dictionary_list, open_csv_file, write_csv_file, find_vessel
 from text_tools import strip_date, find_non_repeat_seqs
 
-def inspect_vessel(directory, vessel_name, reference_date):
-    vessels_list = []
+def inspect_vessel(vessel_name, reference_date):
     selected_vessel_id = find_vessel(vessel_name)
-    vessels_list = get_dictionary_list(directory) # Get a list of all the vessel dictionaries
 
     # FIND THE CORRECT PORT CALL ID
     call_id = 0
@@ -163,7 +161,7 @@ def identify_cargo():
                 continue
 
     if not match_found:
-        print("Port call not found")
+        print("Port call not found.")
 
 
 def export_customer_profile(customer_name):
@@ -370,7 +368,7 @@ def asses_weather(date_weather, weather_vessel_name):
             vessel_found = True
 
     if not vessel_found: #Gives error message and returns to main menu
-        print("Vessel not found")
+        print("Vessel not found.")
         return
 
     for row in port_rows: #Loops through the rows in port_rows and finds the matching date and vessel_id
