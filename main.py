@@ -1,10 +1,6 @@
 from data_access import load_vessels, find_vessel
-from operations import inspect_vessel, export_customer_profile, find_portcalls, analyze_longest_seq, asses_weather, classify_shipment, identify_cargo, sanitize_report
+from operations import inspect_vessel, export_customer_profile, find_portcalls, analyze_longest_seq, asses_weather, classify_shipment, identify_cargo, sanitize_report, search_reports
 from text_tools import validate_date, validate_month
-
-
-def search_reports():
-    print("HI")
 
 def main():
     choice = "0"
