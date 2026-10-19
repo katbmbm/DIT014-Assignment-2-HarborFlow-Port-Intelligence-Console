@@ -1,5 +1,5 @@
 from data_access import load_vessels
-from operations import inspect_vessel, export_customer_profile, find_portcalls, analyze_longest_seq, asses_weather, classify_shipment, identify_cargo
+from operations import inspect_vessel, export_customer_profile, find_portcalls, analyze_longest_seq, asses_weather, classify_shipment, identify_cargo, sanitize_report
 from text_tools import validate_date, validate_month
 
 
