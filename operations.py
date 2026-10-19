@@ -435,9 +435,9 @@ def search_reports():
 
     # Check if cache needs to be rebuilt
     rebuild_cache = True # Default to True as a safeguard for missing, malformed, or outdated cache files
-    if os.path.exists(index_path): # Check if the cache file exists
+    if os.path.exists(index_path):
         try:
-            cache_mtime = os.path.getmtime(index_path) # Get the last modified time of the existing cache file
+            cache_mtime = os.path.getmtime(index_path) # Get last modified time of the existing cache file
             latest_incident_mtime = max(
                 os.path.getmtime(os.path.join(incidents_dir, f)) # Get the last modified time of each incident report file
                 for f in os.listdir(incidents_dir) if f.endswith(".json") # Only consider JSON files (just in case there are other file types in the directory)
@@ -497,7 +497,8 @@ def search_reports():
         with open(index_path, 'w', encoding='utf-8') as cf: 
             json.dump(cache_content, cf,) # json.dump writes the dictionary (cache_content) into the file (cf)
 
-    try:
+    
+    try: 
         with open(index_path, 'r', encoding='utf-8') as cf:
             cache = json.load(cf)
             word_index = cache.get("index", {})
@@ -506,28 +507,30 @@ def search_reports():
         print("Error reading incident index cache.")
         return
 
-    # User query
+    # Get and nornalize user query
     query = input("\nSearch incident reports: ").strip()
     if not query:
         return
-
-    # Normalize query into distinct words
     query_words = set(re.findall(r'\b\w+\b', query.lower()))
-    
-    print(f"Matches for '{query}':")
     
     if not query_words:
         return
 
-    # Calculate scores by counting how many query words appear in each report.
+    # Calculate scores by counting how many query words appear in each report
     score = {}
     for word in query_words:
-        for inc_id in word_index.get(word, []):
-            score[inc_id] = score.get(inc_id, 0) + 1
+        for inc_id in word_index.get(word, []): # For each incident ID associated with the word, increment its score by 1. This means that if a report contains multiple query words, it will have a higher score, indicating a better match.
+            score[inc_id] = score.get(inc_id, 0) + 1 # Looks up current score and defaults to 0
 
-    matching_ids = score
+    # Prepare the list, results, for sorting by converting the score dictionary items into a list of tuples: (-score, inc_id)
+    # Use negative numbers because they have to get sorted in ascending order but need to be displayed in descending order
+    results = [(-s, inc_id) for inc_id, s in score.items()]
 
-    # Print clean, sorted list of matches
-    for inc_id in sorted(matching_ids):
+    results.sort() # In ascending order
+
+    print(f"Matches for '{query}':")
+
+    for neg_s, inc_id in results:
+        s = -neg_s  # Convert back to positive score for display
         title = title_lookup.get(inc_id, "Untitled")
-        print(f"{inc_id} | score {score[inc_id]} | {title}")
+        print(f"- {inc_id} | score {s} | {title}")
