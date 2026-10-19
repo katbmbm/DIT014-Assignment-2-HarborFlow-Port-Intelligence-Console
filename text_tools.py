@@ -19,10 +19,10 @@ def validate_month(month):
             if 1 <= month <= 12:
                 return month
             else:
-                print("Error - Enter a month from 1 to 12")
+                print("Error - Enter a month from 1 to 12.")
                 month = input("Month (1-12): ")
         except ValueError:
-            print("Error - Enter a month from 1 to 12")
+            print("Error - Enter a month from 1 to 12.")
             month = input("Month (1-12): ")
 
 def find_non_repeat_seqs(seq_list):
