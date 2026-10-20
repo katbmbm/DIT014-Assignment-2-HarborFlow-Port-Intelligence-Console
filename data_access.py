@@ -72,7 +72,7 @@ def open_csv_file(directory):
     try:
         with open(directory, "r", newline="") as file:
             reader = csv.reader(file)
-            next(reader) # I CHANGED IT SO IT SKIPS THE HEADER, IF THIS FUCKS UP OTHER FUNCTIONS CHANGE IT BACK <3
+            next(reader) # Skips the header row in the file
             rows = list(reader) # Rows is a list. Each element is a list of columns.
             return rows
     except FileNotFoundError:
