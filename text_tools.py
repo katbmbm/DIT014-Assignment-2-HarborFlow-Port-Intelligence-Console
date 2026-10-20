@@ -13,17 +13,17 @@ def strip_date(date):
 
 
 def validate_month(month):
-    while True:
+   valid = False
+    while not valid:
         try:
-            month = int(month)
-            if 1 <= month <= 12:
-                return month
-            else:
-                print("Error - Enter a month from 1 to 12.")
-                month = input("Month (1-12): ")
+            month_int = int(month)
+            if 1 <= month_int <= 12:
+                return month_int
+            print("Error - Enter a month from 1 to 12.")
         except ValueError:
             print("Error - Enter a month from 1 to 12.")
-            month = input("Month (1-12): ")
+            
+        month = input("Month (1-12): ")
 
 def find_non_repeat_seqs(seq_list):
     windows = [[]] # Create a windows list with an empty window list inside of it
