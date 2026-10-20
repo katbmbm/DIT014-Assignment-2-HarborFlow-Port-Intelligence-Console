@@ -37,7 +37,7 @@ def inspect_vessel(vessel_name, reference_date):
                 date = row[3] # Save this to be printed at the end
     
     if call_id == 0:
-        print("No call ID was found to match the information provided.")
+        print("No upcoming port calls found.")
         return
     
     # FIND THE LIST OF SHIPMENTS THAT MATCH CALL ID IN MANIFESTS:       
@@ -50,7 +50,7 @@ def inspect_vessel(vessel_name, reference_date):
             shipments_called += manifest["shipment_ids"]
 
     if shipments_called == []:
-        print("No upcoming port calls found")
+        print("Manifest unavailable.")
         return
 
     # PRINT THE DATA FOUND:
