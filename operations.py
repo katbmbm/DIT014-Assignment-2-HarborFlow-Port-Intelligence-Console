@@ -1,8 +1,3 @@
-"""HarborFlow operational business rules.
-
-Keep calculations and record-processing logic separate from user interaction
-where practical.
-"""
 
 import datetime
 import os
@@ -21,7 +16,7 @@ def inspect_vessel(vessel_name, reference_date):
     port_call_rows =  open_csv_file("dataset/port_calls.csv")
 
     if not port_call_rows: # If the open_csv_file fct returned False, the file is missing
-        print(f"Missing file") 
+        print("Missing file.") 
         return
     
     for row in port_call_rows:
@@ -108,11 +103,11 @@ def identify_cargo():
         return
 
     for filename in os.listdir(manifest_dir): # Loop through all files in the manifests folder
-        if filename.endswith(".json"):
+        if filename.endswith(".json"): # Check if the file is a JSON file
             file_path = os.path.join(manifest_dir, filename) # Get the full path of the file
             try:
-                with open(file_path, 'r') as f: 
-                    manifest = json.load(f)
+                with open(file_path, 'r') as f: # Open the JSON file
+                    manifest = json.load(f) # Load the JSON data
 
                     if manifest.get("call_id", "").lower() == call_id: # Check if the call ID matches
                         match_found = True
@@ -126,8 +121,8 @@ def identify_cargo():
                         }
 
                         shipments_dir = "dataset/shipments/" # Define the directory where shipments are stored
-                        for s_id in shipment_ids: # Loop through each shipment
-                            formatted_filename = s_id.lower().replace("shp-", "shipment-") + ".json" # Format the shipment ID to match the filename in the shipments folder
+                        for s_id in shipment_ids: # Loop through each shipment ID NOTE: I chose s_id instead of shipment_id to avoid confusion with the shipment_ids variable
+                            formatted_filename = s_id.lower().replace("shp-", "shipment-") + ".json" # There's probably a better way to do this... but I need to format the shipment ID to match the filename in the shipments folder
                             shipment_path = os.path.join(shipments_dir, formatted_filename)
                             
                             if not os.path.exists(shipment_path): # Check if the shipment file exists
@@ -136,14 +131,12 @@ def identify_cargo():
                                 with open(shipment_path, 'r') as sf:
                                     shipment = json.load(sf)
 
-                                shipment["hazardous"] = shipment.get("hazardous", False)
-                                shipment["temperature_controlled"] = shipment.get("temperature_controlled", False)
-
                                 category, reason = classify_shipment(shipment) # Classify the shipment
                                 if category in category_counts:
                                     category_counts[category] += 1
 
-                                print(f"{s_id} | {category} | {reason}") # Print in correct order
+                                # Print in correct order
+                                print(f"{s_id} | {category} | {reason}")
                             
                             except Exception:
                                 continue
@@ -224,7 +217,7 @@ def find_portcalls(month):
 
     port_rows = open_csv_file("dataset/port_calls.csv") #Get port_calls.csv
     if not port_rows: # If the open_csv_file fct returned False, the file is missing
-            print(f"Missing file") 
+            print("Missing file") 
             return
 
     matching_port_calls = [] #Initiate empty list
@@ -271,7 +264,7 @@ def sanitize_report():
             except Exception:
                 continue
 
-    if not incidents:
+    if incidents == []:
         print("No incident reports found.")
         return
 
@@ -281,14 +274,14 @@ def sanitize_report():
 
     # Ask for selection after the list is displayed
     selected_incident = None
-    while True:
+    while selected_incident is None:
         selected_incident_input = input("\nSelect incident list number: ").strip()
         if selected_incident_input.isdigit():
             choice_idx = int(selected_incident_input)
             if 1 <= choice_idx <= len(incidents):
                 selected_incident = incidents[choice_idx - 1]
-                break
-        print("Error - Select a listed incident.")
+        if selected_incident is None:
+            print("Error - Select a listed incident.")
 
     # Extract report text and incident_id
     report_text = selected_incident.get("report", "")
@@ -440,8 +433,9 @@ def search_reports():
             latest_incident_mtime = max(
                 os.path.getmtime(os.path.join(incidents_dir, f)) # Get the last modified time of each incident report file
                 for f in os.listdir(incidents_dir) if f.endswith(".json") # Only consider JSON files (just in case there are other file types in the directory)
+            )
 
-            if cache_mtime >= latest_incident_mtime: # If the cache is newer (greater) than or equal to the latest incident report, it can be used
+            if cache_mtime >= latest_incident_mtime: # If the cache is newer (greater) than or equal to the latest incident report, we can use it
                 rebuild_cache = False # If the cache is up-to-date, we don't need to rebuild it
         except Exception:
             rebuild_cache = True # Rebbuild the cache if any error occurs.
@@ -465,11 +459,6 @@ def search_reports():
                             titles_data[inc_id] = title # Saves title in the titles_data dictionary with the incident ID as the key
                             words = set(re.findall(r'\b\w+\b', report.lower())) # Normalize the report text to lowercase and extract unique words using regex. The regex pattern \b\w+\b matches whole words, ignoring punctuation and special characters. Using a set ensures that each word is stored only once, eliminating duplicates.
                             
-                            for word in words: # Loop through each unique word in the report
-                                if word not in index_data: # If the word is not already in the index_data dictionary, we create a new entry for it with an empty set to hold incident IDs
-                                    index_data[word] = set() # Add the current incident ID to the set of incident IDs for this word. Using a set ensures that each incident ID is stored only once for each word, preventing duplicates.
-                                index_data[word].add(inc_id) # Add the incident ID to the set (sets automatically prevent duplicate IDs)
-
                 except Exception:
                     continue
         
@@ -477,7 +466,7 @@ def search_reports():
         sorted_index = { 
             w: sorted(list(ids)) for w, ids in sorted(index_data.items()) 
             # Note: 'ids' is a set (unordered), so we convert it to a list 
-            # and use sorted() to put the incident IDs in alphabetical order
+            # and use sorted() to put the incident IDs in neat alphabetical order
         } 
 
         sorted_titles = { 
@@ -532,3 +521,6 @@ def search_reports():
         s = -neg_s  # Convert back to positive score for display
         title = title_lookup.get(inc_id, "Untitled")
         print(f"- {inc_id} | score {s} | {title}")
+
+
+
