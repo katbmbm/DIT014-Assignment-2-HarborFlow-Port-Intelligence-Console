@@ -13,7 +13,7 @@ def strip_date(date):
 
 
 def validate_month(month):
-   valid = False
+    valid = False
     while not valid:
         try:
             month_int = int(month)
