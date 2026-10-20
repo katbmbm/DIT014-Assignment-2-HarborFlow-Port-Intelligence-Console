@@ -282,14 +282,18 @@ def sanitize_report():
 
     # Ask for selection after the list is displayed
     selected_incident = None
-    while True:
+
+    while selected_incident is None:
         selected_incident_input = input("\nSelect incident list number: ").strip()
+    
         if selected_incident_input.isdigit():
             choice_idx = int(selected_incident_input)
             if 1 <= choice_idx <= len(incidents):
                 selected_incident = incidents[choice_idx - 1]
-                break
-        print("Error - Select a listed incident.")
+    
+            
+        if selected_incident is None:
+            print("Error - Select a listed incident.")
 
     # Extract report text and incident_id
     report_text = selected_incident.get("report", "")
