@@ -108,11 +108,11 @@ def identify_cargo():
         return
 
     for filename in os.listdir(manifest_dir): # Loop through all files in the manifests folder
-        if filename.endswith(".json"): # Check if the file is a JSON file
+        if filename.endswith(".json"):
             file_path = os.path.join(manifest_dir, filename) # Get the full path of the file
             try:
-                with open(file_path, 'r') as f: # Open the JSON file
-                    manifest = json.load(f) # Load the JSON data
+                with open(file_path, 'r') as f: 
+                    manifest = json.load(f)
 
                     if manifest.get("call_id", "").lower() == call_id: # Check if the call ID matches
                         match_found = True
@@ -126,8 +126,8 @@ def identify_cargo():
                         }
 
                         shipments_dir = "dataset/shipments/" # Define the directory where shipments are stored
-                        for s_id in shipment_ids: # Loop through each shipment ID NOTE: I chose s_id instead of shipment_id to avoid confusion with the shipment_ids variable
-                            formatted_filename = s_id.lower().replace("shp-", "shipment-") + ".json" # There's probably a better way to do this... but I need to format the shipment ID to match the filename in the shipments folder
+                        for s_id in shipment_ids: # Loop through each shipment
+                            formatted_filename = s_id.lower().replace("shp-", "shipment-") + ".json" # Format the shipment ID to match the filename in the shipments folder
                             shipment_path = os.path.join(shipments_dir, formatted_filename)
                             
                             if not os.path.exists(shipment_path): # Check if the shipment file exists
@@ -143,8 +143,7 @@ def identify_cargo():
                                 if category in category_counts:
                                     category_counts[category] += 1
 
-                                # Print in correct order
-                                print(f"{s_id} | {category} | {reason}")
+                                print(f"{s_id} | {category} | {reason}") # Print in correct order
                             
                             except Exception:
                                 continue
@@ -441,9 +440,8 @@ def search_reports():
             latest_incident_mtime = max(
                 os.path.getmtime(os.path.join(incidents_dir, f)) # Get the last modified time of each incident report file
                 for f in os.listdir(incidents_dir) if f.endswith(".json") # Only consider JSON files (just in case there are other file types in the directory)
-            )
 
-            if cache_mtime >= latest_incident_mtime: # If the cache is newer (greater) than or equal to the latest incident report, we can use it
+            if cache_mtime >= latest_incident_mtime: # If the cache is newer (greater) than or equal to the latest incident report, it can be used
                 rebuild_cache = False # If the cache is up-to-date, we don't need to rebuild it
         except Exception:
             rebuild_cache = True # Rebbuild the cache if any error occurs.
@@ -479,7 +477,7 @@ def search_reports():
         sorted_index = { 
             w: sorted(list(ids)) for w, ids in sorted(index_data.items()) 
             # Note: 'ids' is a set (unordered), so we convert it to a list 
-            # and use sorted() to put the incident IDs in neat alphabetical order
+            # and use sorted() to put the incident IDs in alphabetical order
         } 
 
         sorted_titles = { 
