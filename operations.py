@@ -272,7 +272,7 @@ def sanitize_report():
             except Exception:
                 continue
 
-    if not incidents:
+    if incidents == []:
         print("No incident reports found.")
         return
 
